@@ -4,6 +4,7 @@ import api from "./Services/api";
 import Searchbar from "./Components/Searchbar/Searchbar";
 import ImageGallery from "./Components/ImageGallery/ImageGallery";
 import Button from "./Components/Button/Button";
+import Loader from "./Components/Loader/Loader";
 
 class App extends Component {
 	state = {
@@ -17,7 +18,6 @@ class App extends Component {
 
 	updateQuery = ({ query }) => {
 		this.setState({ query: query });
-		console.log(this.state.images);
 	};
 
 	mapNewImages = (fetchedImages) => {
@@ -44,6 +44,7 @@ class App extends Component {
 				const mapedImages = await this.mapNewImages(fetchedData.images);
 				const lastPage = Math.ceil(fetchedData.total / 12);
 				this.setState({ images: mapedImages, actualPage: 1, lastPage: lastPage });
+				window.scrollTo({ top: 0, behavior: "smooth" });
 			} catch (error) {
 				this.setState({ error });
 			} finally {
@@ -51,7 +52,11 @@ class App extends Component {
 			}
 		}
 
-		if (prevState.actualPage !== this.state.actualPage && prevState.query === this.state.query) {
+		if (
+			prevState.actualPage !== this.state.actualPage &&
+			prevState.query === this.state.query &&
+			this.state.actualPage !== 1
+		) {
 			const { query, actualPage, images } = this.state;
 			this.setState({ isLoading: true });
 			try {
@@ -68,12 +73,17 @@ class App extends Component {
 	}
 
 	render() {
-		const { images, actualPage, lastPage } = this.state;
+		const { images, actualPage, lastPage, isLoading } = this.state;
 		return (
 			<>
 				<Searchbar onSubmit={this.updateQuery}></Searchbar>
-				<ImageGallery images={images}></ImageGallery>
-				{actualPage !== lastPage ? <Button onClick={this.goToNextPage}></Button> : ""}
+				<ImageGallery images={images} page={actualPage}></ImageGallery>
+				{actualPage !== lastPage && images.length > 0 && isLoading === false ? (
+					<Button onClick={this.goToNextPage}></Button>
+				) : (
+					""
+				)}
+				{isLoading && <Loader></Loader>}
 			</>
 		);
 	}
