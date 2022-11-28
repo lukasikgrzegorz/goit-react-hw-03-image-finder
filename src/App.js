@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import "./App.css";
-import Searchbar from "./Components/Searchbar/Searchbar";
 import api from "./Services/api";
+import Searchbar from "./Components/Searchbar/Searchbar";
+import ImageGallery from "./Components/ImageGallery/ImageGallery";
 
 class App extends Component {
 	state = {
@@ -23,13 +24,12 @@ class App extends Component {
 			small: image.webformatURL,
 			large: image.largeImageURL,
 		}));
-
 		return mapedImages;
 	};
 
 	async componentDidUpdate(prevProps, prevState) {
-		if (prevState.query != this.state.query) {
-			const { query, page, images } = this.state;
+		if (prevState.query !== this.state.query) {
+			const { query, page } = this.state;
 			this.setState({ isLoading: true });
 			try {
 				const fetchedImages = await api.fetchImageWithQuery(query, page);
@@ -45,9 +45,11 @@ class App extends Component {
 	}
 
 	render() {
+		const { images } = this.state;
 		return (
 			<>
 				<Searchbar onSubmit={this.updateQuery}></Searchbar>
+				<ImageGallery images={images}></ImageGallery>
 			</>
 		);
 	}
