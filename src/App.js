@@ -6,6 +6,7 @@ import ImageGallery from "./Components/ImageGallery/ImageGallery";
 import Button from "./Components/Button/Button";
 import Loader from "./Components/Loader/Loader";
 import Modal from "./Components/Modal/Modal";
+import OnError from "./Components/OnError/OnError";
 
 class App extends Component {
 	state = {
@@ -101,7 +102,8 @@ class App extends Component {
 	}
 
 	render() {
-		const { images, actualPage, lastPage, isLoading, modalIsOpen, modalPhotoURL } = this.state;
+		const { images, actualPage, lastPage, isLoading, modalIsOpen, modalPhotoURL, query } =
+			this.state;
 		return (
 			<>
 				{modalIsOpen && (
@@ -123,6 +125,9 @@ class App extends Component {
 					""
 				)}
 				{isLoading && <Loader></Loader>}
+				{images.length === 0 && query !== "" && isLoading === false && (
+					<OnError>Nothing found! Try again</OnError>
+				)}
 			</>
 		);
 	}
