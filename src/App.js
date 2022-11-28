@@ -3,6 +3,7 @@ import "./App.css";
 import api from "./Services/api";
 import Searchbar from "./Components/Searchbar/Searchbar";
 import ImageGallery from "./Components/ImageGallery/ImageGallery";
+import Button from "./Components/Button/Button";
 
 class App extends Component {
 	state = {
@@ -11,6 +12,7 @@ class App extends Component {
 		error: null,
 		query: "",
 		actualPage: 1,
+		lastPage: 1,
 	};
 
 	updateQuery = ({ query }) => {
@@ -27,15 +29,36 @@ class App extends Component {
 		return mapedImages;
 	};
 
+	goToNextPage = () => {
+		let { actualPage } = this.state;
+		actualPage++;
+		this.setState({ actualPage: actualPage });
+	};
+
 	async componentDidUpdate(prevProps, prevState) {
 		if (prevState.query !== this.state.query) {
-			const { query, page } = this.state;
+			const { query } = this.state;
 			this.setState({ isLoading: true });
 			try {
-				const fetchedImages = await api.fetchImageWithQuery(query, page);
-				const mapedImages = await this.mapNewImages(fetchedImages);
-				// const concatImages = images.concat(mapedImages);
-				this.setState({ images: mapedImages });
+				const fetchedData = await api.fetchImageWithQuery(query, 1);
+				const mapedImages = await this.mapNewImages(fetchedData.images);
+				const lastPage = Math.ceil(fetchedData.total / 12);
+				this.setState({ images: mapedImages, actualPage: 1, lastPage: lastPage });
+			} catch (error) {
+				this.setState({ error });
+			} finally {
+				this.setState({ isLoading: false });
+			}
+		}
+
+		if (prevState.actualPage !== this.state.actualPage && prevState.query === this.state.query) {
+			const { query, actualPage, images } = this.state;
+			this.setState({ isLoading: true });
+			try {
+				const fetchedData = await api.fetchImageWithQuery(query, actualPage);
+				const mapedImages = await this.mapNewImages(fetchedData.images);
+				const concatImages = images.concat(mapedImages);
+				this.setState({ images: concatImages });
 			} catch (error) {
 				this.setState({ error });
 			} finally {
@@ -45,11 +68,12 @@ class App extends Component {
 	}
 
 	render() {
-		const { images } = this.state;
+		const { images, actualPage, lastPage } = this.state;
 		return (
 			<>
 				<Searchbar onSubmit={this.updateQuery}></Searchbar>
 				<ImageGallery images={images}></ImageGallery>
+				{actualPage !== lastPage ? <Button onClick={this.goToNextPage}></Button> : ""}
 			</>
 		);
 	}
