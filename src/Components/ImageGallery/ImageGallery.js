@@ -9,12 +9,18 @@ class ImageGallery extends Component {
 		}
 	}
 	render() {
-		const { images } = this.props;
+		const { images, clickHanlder } = this.props;
 		return (
 			<ul className={css["image-gallery"]}>
 				{images.map((image) => {
 					return (
-						<ImageGalleryItem key={image.id} id={image.id} src={image.small}></ImageGalleryItem>
+						<ImageGalleryItem
+							key={image.id}
+							id={image.id}
+							src={image.small}
+							data={image.large}
+							clickHanlder={clickHanlder}
+						></ImageGalleryItem>
 					);
 				})}
 			</ul>

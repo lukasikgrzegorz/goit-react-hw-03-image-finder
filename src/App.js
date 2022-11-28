@@ -5,6 +5,7 @@ import Searchbar from "./Components/Searchbar/Searchbar";
 import ImageGallery from "./Components/ImageGallery/ImageGallery";
 import Button from "./Components/Button/Button";
 import Loader from "./Components/Loader/Loader";
+import Modal from "./Components/Modal/Modal";
 
 class App extends Component {
 	state = {
@@ -14,6 +15,8 @@ class App extends Component {
 		query: "",
 		actualPage: 1,
 		lastPage: 1,
+		modalIsOpen: false,
+		modalPhotoURL: null,
 	};
 
 	updateQuery = ({ query }) => {
@@ -33,6 +36,31 @@ class App extends Component {
 		let { actualPage } = this.state;
 		actualPage++;
 		this.setState({ actualPage: actualPage });
+	};
+
+	openModal = (e) => {
+		this.setState({
+			modalPhotoURL: e.target.dataset["source"],
+			modalIsOpen: true,
+		});
+	};
+
+	closeModal = (e) => {
+		if (e.target.nodeName !== "IMG") {
+			this.setState({
+				modalPhotoURL: null,
+				modalIsOpen: false,
+			});
+		}
+	};
+
+	closeModalwithButton = (e) => {
+		if (e.key === "Escape") {
+			this.setState({
+				modalPhotoURL: null,
+				modalIsOpen: false,
+			});
+		}
 	};
 
 	async componentDidUpdate(prevProps, prevState) {
@@ -73,11 +101,22 @@ class App extends Component {
 	}
 
 	render() {
-		const { images, actualPage, lastPage, isLoading } = this.state;
+		const { images, actualPage, lastPage, isLoading, modalIsOpen, modalPhotoURL } = this.state;
 		return (
 			<>
+				{modalIsOpen && (
+					<Modal
+						src={modalPhotoURL}
+						closeHandler={this.closeModal}
+						escHandler={this.closeModalwithButton}
+					></Modal>
+				)}
 				<Searchbar onSubmit={this.updateQuery}></Searchbar>
-				<ImageGallery images={images} page={actualPage}></ImageGallery>
+				<ImageGallery
+					images={images}
+					page={actualPage}
+					clickHanlder={this.openModal}
+				></ImageGallery>
 				{actualPage !== lastPage && images.length > 0 && isLoading === false ? (
 					<Button onClick={this.goToNextPage}></Button>
 				) : (
