@@ -19,6 +19,7 @@ class ImageGallery extends Component {
 							id={image.id}
 							src={image.small}
 							data={image.large}
+							alt={image.alt}
 							clickHanlder={clickHanlder}
 						></ImageGalleryItem>
 					);

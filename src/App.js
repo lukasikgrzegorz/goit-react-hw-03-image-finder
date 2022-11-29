@@ -17,7 +17,11 @@ class App extends Component {
 		actualPage: 1,
 		lastPage: 1,
 		modalIsOpen: false,
+	};
+
+	modalInfo = {
 		modalPhotoURL: null,
+		modalAlt: null,
 	};
 
 	updateQuery = ({ query }) => {
@@ -29,6 +33,7 @@ class App extends Component {
 			id: image.id,
 			small: image.webformatURL,
 			large: image.largeImageURL,
+			alt: image.tags,
 		}));
 		return mapedImages;
 	};
@@ -41,15 +46,18 @@ class App extends Component {
 
 	openModal = (e) => {
 		this.setState({
-			modalPhotoURL: e.target.dataset["source"],
 			modalIsOpen: true,
 		});
+
+		this.modalInfo = {
+			modalPhotoURL: e.target.dataset["source"],
+			modalAlt: e.target.alt,
+		};
 	};
 
 	closeModal = (e) => {
 		if (e.target.nodeName !== "IMG") {
 			this.setState({
-				modalPhotoURL: null,
 				modalIsOpen: false,
 			});
 		}
@@ -58,7 +66,6 @@ class App extends Component {
 	closeModalwithButton = (e) => {
 		if (e.key === "Escape") {
 			this.setState({
-				modalPhotoURL: null,
 				modalIsOpen: false,
 			});
 		}
@@ -102,13 +109,15 @@ class App extends Component {
 	}
 
 	render() {
-		const { images, actualPage, lastPage, isLoading, modalIsOpen, modalPhotoURL, query } =
-			this.state;
+		const { images, actualPage, lastPage, isLoading, modalIsOpen, query } = this.state;
+		const { modalPhotoURL, modalAlt } = this.modalInfo;
+
 		return (
 			<>
 				{modalIsOpen && (
 					<Modal
 						src={modalPhotoURL}
+						alt={modalAlt}
 						closeHandler={this.closeModal}
 						escHandler={this.closeModalwithButton}
 					></Modal>
