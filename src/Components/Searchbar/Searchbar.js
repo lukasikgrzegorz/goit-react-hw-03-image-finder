@@ -1,8 +1,12 @@
 import React, { Component } from "react";
 import css from "./Searchbar.module.css";
+import PropTypes from "prop-types";
 
 class Searchbar extends Component {
-	
+	static propTypes = {
+		onSubmit: PropTypes.func.isRequired,
+	};
+
 	handleSumbit = (e) => {
 		e.preventDefault();
 		const form = e.currentTarget;
