@@ -122,18 +122,18 @@ class App extends Component {
 						escHandler={this.closeModalwithButton}
 					></Modal>
 				)}
-				<Searchbar onSubmit={this.updateQuery}></Searchbar>
+				<Searchbar onSubmit={this.updateQuery} />
 				<ImageGallery
 					images={images}
 					page={actualPage}
 					clickHanlder={this.openModal}
 				></ImageGallery>
 				{actualPage !== lastPage && images.length > 0 && isLoading === false ? (
-					<Button onClick={this.goToNextPage}></Button>
+					<Button onClick={this.goToNextPage} />
 				) : (
 					""
 				)}
-				{isLoading && <Loader></Loader>}
+				{isLoading && <Loader/>}
 				{images.length === 0 && query !== "" && isLoading === false && (
 					<OnError>Nothing found! Try again</OnError>
 				)}
