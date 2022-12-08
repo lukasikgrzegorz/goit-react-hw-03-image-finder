@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import "./App.css";
-import api from "./Services/api";
-import Searchbar from "./Components/Searchbar/Searchbar";
-import ImageGallery from "./Components/ImageGallery/ImageGallery";
-import Button from "./Components/Button/Button";
-import Loader from "./Components/Loader/Loader";
-import Modal from "./Components/Modal/Modal";
-import OnError from "./Components/OnError/OnError";
+import api from "./services/api";
+import Searchbar from "./components/searchbar/Searchbar";
+import ImageGallery from "./components/imageGallery/ImageGallery";
+import Button from "./components/button/Button";
+import Loader from "./components/loader/Loader";
+import Modal from "./components/modal/Modal";
+import OnError from "./components/onError/OnError";
 
 class App extends Component {
 	state = {
@@ -77,7 +77,7 @@ class App extends Component {
 			this.setState({ isLoading: true });
 			try {
 				const fetchedData = await api.fetchImageWithQuery(query, 1);
-				const mapedImages = await this.mapNewImages(fetchedData.images);
+				const mapedImages = this.mapNewImages(fetchedData.images);
 				const lastPage = Math.ceil(fetchedData.total / 12);
 				this.setState({ images: mapedImages, actualPage: 1, lastPage: lastPage });
 				window.scrollTo({ top: 0, behavior: "smooth" });
@@ -116,8 +116,8 @@ class App extends Component {
 			<>
 				{modalIsOpen && (
 					<Modal
-						src={modalPhotoURL}
-						alt={modalAlt}
+						imgSrc={modalPhotoURL}
+						imgAlt={modalAlt}
 						closeHandler={this.closeModal}
 						escHandler={this.closeModalwithButton}
 					></Modal>
@@ -128,15 +128,11 @@ class App extends Component {
 					page={actualPage}
 					clickHanlder={this.openModal}
 				></ImageGallery>
-				{actualPage !== lastPage && images.length > 0 && isLoading === false ? (
+				{actualPage !== lastPage && images.length > 0 && !isLoading ? (
 					<Button onClick={this.goToNextPage} />
-				) : (
-					""
-				)}
-				{isLoading && <Loader/>}
-				{images.length === 0 && query !== "" && isLoading === false && (
-					<OnError>Nothing found! Try again</OnError>
-				)}
+				) : null}
+				{isLoading && <Loader />}
+				{images.length === 0 && query && !isLoading && <OnError>Nothing found! Try again</OnError>}
 			</>
 		);
 	}

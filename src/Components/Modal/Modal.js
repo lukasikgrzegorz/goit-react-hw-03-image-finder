@@ -3,13 +3,6 @@ import css from "./Modal.module.css";
 import PropTypes from "prop-types";
 
 class Modal extends Component {
-	static propTypes = {
-		src: PropTypes.string.isRequired,
-		alt: PropTypes.string.isRequired,
-		closeHandler: PropTypes.func.isRequired,
-		escHandler: PropTypes.func.isRequired,
-	};
-
 	componentDidMount() {
 		document.addEventListener("keydown", this.props.escHandler);
 	}
@@ -19,15 +12,22 @@ class Modal extends Component {
 	}
 
 	render() {
-		const { src, alt, closeHandler } = this.props;
+		const { imgSrc, imgAlt, closeHandler } = this.props;
 		return (
 			<div className={css["overlay"]} onClick={closeHandler}>
 				<div className={css["modal"]}>
-					<img src={src} alt={alt} />
+					<img src={imgSrc} alt={imgAlt} />
 				</div>
 			</div>
 		);
 	}
 }
+
+Modal.propTypes = {
+	imgSrc: PropTypes.string.isRequired,
+	imgAlt: PropTypes.string.isRequired,
+	closeHandler: PropTypes.func.isRequired,
+	escHandler: PropTypes.func.isRequired,
+};
 
 export default Modal;
